@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4D Analytics - Intelligent Systems Consultant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1565c0;
+            --secondary: #2196f3;
+            --accent: #42a5f5;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #1565c0 0%, #42a5f5 100%);
+            --brand-blue: #2196f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            overflow-x: hidden;
+            background: var(--light);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s;
+        }
+
+        nav.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: var(--gradient);
+            color: white !important;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .cta-button::after {
+            display: none;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(21, 101, 192, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: var(--dark);
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 8rem 2rem 4rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(21, 101, 192, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(66, 165, 245, 0.2) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(33, 150, 243, 0.2);
+            color: #90caf9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(33, 150, 243, 0.3);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, #90caf9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: #cbd5e1;
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(21, 101, 192, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(21, 101, 192, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Section Styles */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-description {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            transform: translateZ(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) translateZ(20px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.18), 0 10px 30px rgba(21, 101, 192, 0.15);
+            border-color: var(--primary);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .service-card ul {
+            list-style: none;
+            color: #64748b;
+        }
+
+        .service-card li {
+            padding: 0.5rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .service-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Lab Section */
+        .lab-section {
+            background: #f1f5f9;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .lab-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(0, 0, 0, 0.07);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateZ(0);
+        }
+
+        .lab-card:hover {
+            transform: translateY(-12px) translateZ(30px) rotateX(2deg);
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.2), 0 15px 40px rgba(33, 150, 243, 0.2);
+        }
+
+        .lab-image {
+            width: 100%;
+            height: 250px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .lab-content {
+            padding: 2rem;
+        }
+
+        .lab-badge {
+            background: rgba(21, 101, 192, 0.1);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .lab-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .lab-card p {
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .lab-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Skills & Certifications Section */
+        .skills-section {
+            background: white;
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .skills-column h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .skill-category {
+            margin-bottom: 2.5rem;
+        }
+
+        .skill-category h4 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .skill-tag {
+            background: #e3f2fd;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Certification Cards */
+        .certification-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .certification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .cert-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+            transform: translateZ(0);
+        }
+
+        .cert-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-10px) translateZ(20px) rotateX(5deg);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15), 0 10px 30px rgba(21, 101, 192, 0.2);
+        }
+
+        .cert-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s;
+        }
+
+        .cert-card:hover .cert-icon {
+            transform: scale(1.1) rotateY(10deg);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .cert-icon.microsoft-cert {
+            background: linear-gradient(135deg, #00a4ef 0%, #0078d4 100%);
+        }
+
+        .cert-icon.ibm-cert {
+            background: linear-gradient(135deg, #0f62fe 0%, #001d6c 100%);
+        }
+
+        .cert-icon.azure-cert {
+            background: linear-gradient(135deg, #0078d4 0%, #5ea0ef 100%);
+        }
+
+        .cert-icon.make-cert {
+            background: linear-gradient(135deg, #6e59f7 0%, #4a3f9d 100%);
+        }
+
+        .cert-info h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .cert-info p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .cert-provider {
+            display: inline-block;
+            background: #e3f2fd;
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .linkedin-note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(21, 101, 192, 0.1);
+            border-radius: 8px;
+            color: #475569;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .linkedin-note a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .linkedin-note a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* About Section */
+        .about-section {
+            background: var(--dark);
+            color: white;
+            padding: 6rem 2rem;
+        }
+
+        .about-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            font-weight: 800;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-text .emphasis {
+            color: #90caf9;
+            font-weight: 600;
+        }
+
+        .highlights {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .highlight-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .highlight-item strong {
+            color: #90caf9;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: var(--dark);
+            padding: 5rem 2rem;
+            color: white;
+        }
+
+        .contact-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .contact-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .contact-header p {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            transform: translateZ(0);
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px) translateZ(10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .info-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #90caf9;
+            font-weight: 600;
+        }
+
+        .info-card a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .info-card a:hover {
+            color: #90caf9;
+        }
+
+        .info-card p {
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(33, 150, 243, 0.2);
+            transform: translateZ(0);
+            transition: all 0.3s;
+        }
+
+        .contact-form:hover {
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 15px 40px rgba(33, 150, 243, 0.3);
+        }
+
+        .contact-form h3 {
+            color: var(--dark);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: white;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--gradient);
+            color: white;
+            padding: 1.1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.3);
+            transform: translateZ(0);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px) translateZ(10px);
+            box-shadow: 0 15px 40px rgba(21, 101, 192, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .form-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+            display: block;
+        }
+
+        .form-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: #cbd5e1;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Learning Journey Section */
+        .journey-section {
+            background: white;
+        }
+
+        .journey-timeline {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline-section {
+            margin-bottom: 4rem;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 2.5rem;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            transform: translateZ(0);
+            transition: all 0.3s;
+        }
+
+        .timeline-section:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(21, 101, 192, 0.1);
+            transform: translateY(-5px) translateZ(10px);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .timeline-header h3 {
+            font-size: 1.5rem;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .cert-count {
+            background: var(--gradient);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .timeline-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .timeline-badge.microsoft {
+            background: linear-gradient(135deg, #00a4ef 0%, #0078d4 100%);
+            color: white;
+        }
+
+        .timeline-badge.ibm {
+            background: linear-gradient(135deg, #0f62fe 0%, #001d6c 100%);
+            color: white;
+        }
+
+        .timeline-badge.azure {
+            background: linear-gradient(135deg, #0078d4 0%, #5ea0ef 100%);
+            color: white;
+        }
+
+        .timeline-badge.tinyml {
+            background: linear-gradient(135deg, #00d9ff 0%, #00a1e0 100%);
+            color: white;
+        }
+
+        .timeline-badge.make {
+            background: linear-gradient(135deg, #6e59f7 0%, #4a3f9d 100%);
+            color: white;
+        }
+
+        .timeline-badge.n8n {
+            background: linear-gradient(135deg, #ff6d5a 0%, #ea3425 100%);
+            color: white;
+        }
+
+        .timeline-badge.google {
+            background: linear-gradient(135deg, #4285f4 0%, #ea4335 100%);
+            color: white;
+        }
+
+        .timeline-badge.python {
+            background: linear-gradient(135deg, #3776ab 0%, #ffd43b 100%);
+            color: white;
+        }
+
+        .timeline-badge.js {
+            background: linear-gradient(135deg, #f7df1e 0%, #e8c900 100%);
+            color: #000;
+        }
+
+        .timeline-badge.git {
+            background: linear-gradient(135deg, #f05032 0%, #c9341a 100%);
+            color: white;
+        }
+
+        .timeline-badge.docker {
+            background: linear-gradient(135deg, #2496ed 0%, #1d72b8 100%);
+            color: white;
+        }
+
+        .timeline-badge.rpi {
+            background: linear-gradient(135deg, #c51a4a 0%, #8b1436 100%);
+            color: white;
+        }
+
+        .timeline-badge.project {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-content h4 {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .timeline-provider {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-skills {
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.in-progress {
+            background: rgba(251, 191, 36, 0.2);
+            color: #d97706;
+        }
+
+        /* Journey Stats */
+        .journey-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+            padding: 3rem;
+            background: var(--gradient);
+            border-radius: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+
+            .highlights {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                order: 2;
+            }
+
+            .contact-form {
+                order: 1;
+            }
+
+            .timeline-section {
+                padding: 1.5rem;
+            }
+
+            .timeline-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+            }
+
+            .timeline-item:hover {
+                transform: translateY(-5px);
+            }
+
+            .journey-stats {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <img src="/static/images/4d-logo.png" alt="4D Analytics Logo" class="logo">
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#lab">Lab</a></li>
+                <li><a href="#journey">Journey</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact" class="cta-button">Let's Talk</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <span class="hero-badge">Independent AI Systems Consultant</span>
+            <h1>Transforming Ideas into Intelligent Systems</h1>
+            <p>I help businesses leverage AI, automation, and data engineering to solve complex problems—from edge devices to cloud infrastructure.</p>
+            <div class="hero-buttons">
+                <a href="#lab" class="btn-primary">Explore the Lab</a>
+                <a href="#contact" class="btn-secondary">Work With Me</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- What I Do Section -->
+    <section class="section" id="services">
+        <div class="section-header fade-in">
+            <span class="section-badge">What I Offer</span>
+            <h2 class="section-title">Intelligent Solutions, Built Solo</h2>
+            <p class="section-description">
+                As an independent consultant, I bring deep technical expertise across the full stack—designing, building, and deploying intelligent systems that deliver real business value.
+            </p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card fade-in">
+                <div class="service-icon">🤖</div>
+                <h3>AI & Data Engineering</h3>
+                <ul>
+                    <li>Machine learning model development</li>
+                    <li>Vector databases & semantic search</li>
+                    <li>Data pipelines & transformation</li>
+                    <li>Predictive analytics dashboards</li>
+                </ul>
+            </div>
+
+            <div class="service-card fade-in">
+                <div class="service-icon">⚡</div>
+                <h3>Intelligent Automation</h3>
+                <ul>
+                    <li>Workflow orchestration (Power Automate, n8n)</li>
+                    <li>Conversational AI & chatbots</li>
+                    <li>Low-code application development</li>
+                    <li>API integration & orchestration</li>
+                </ul>
+            </div>
+
+            <div class="service-card fade-in">
+                <div class="service-icon">🔧</div>
+                <h3>Edge AI & IoT</h3>
+                <ul>
+                    <li>Custom Raspberry Pi automation</li>
+                    <li>Computer vision & OCR systems</li>
+                    <li>TinyML deployment</li>
+                    <li>Industrial IoT integration</li>
+                </ul>
+            </div>
+
+            <div class="service-card fade-in">
+                <div class="service-icon">☁️</div>
+                <h3>Cloud Architecture</h3>
+                <ul>
+                    <li>Azure & AWS infrastructure design</li>
+                    <li>Data pipeline orchestration</li>
+                    <li>Real-time analytics systems</li>
+                    <li>Hybrid cloud solutions</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lab Section -->
+    <section class="section lab-section" id="lab">
+        <div class="section-header fade-in">
+            <span class="section-badge">4D Analytics Lab</span>
+            <h2 class="section-title">Recent Experiments & Builds</h2>
+            <p class="section-description">
+                Real-world projects where I push the boundaries of AI, automation, and edge computing.
+            </p>
+        </div>
+
+        <div class="lab-grid">
+            <div class="lab-card fade-in">
+                <div class="lab-image">🧾</div>
+                <div class="lab-content">
+                    <span class="lab-badge">Edge AI • Computer Vision</span>
+                    <h3>Nano SIM OCR Conveyor System</h3>
+                    <p>Automated conveyor system using Raspberry Pi, TinyML (Edge Impulse), and stepper motors for real-time SIM card identification. Achieved 100% detection accuracy with custom-trained model and AWS S3 integration.</p>
+                    <div class="lab-tech">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">TinyML</span>
+                        <span class="tech-tag">Raspberry Pi</span>
+                        <span class="tech-tag">OpenCV</span>
+                        <span class="tech-tag">AWS S3</span>
+                        <span class="tech-tag">n8n</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2.5rem;">
+                    <h4 style="font-size: 1.2rem; color: var(--primary); margin-bottom: 1rem; font-weight: 600;">Industry Experience</h4>
+                    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--primary);">
+                        <p style="color: #475569; line-height: 1.8; margin-bottom: 0.5rem;"><strong>Logistics</strong> • Supply chain optimization, warehouse automation</p>
+                        <p style="color: #475569; line-height: 1.8; margin-bottom: 0.5rem;"><strong>Banking</strong> • Data analytics, compliance reporting</p>
+                        <p style="color: #475569; line-height: 1.8; margin-bottom: 0.5rem;"><strong>Breweries</strong> • Production monitoring, quality control systems</p>
+                        <p style="color: #475569; line-height: 1.8;"><strong>Mining</strong> • Operational analytics, safety systems</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card fade-in">
+                <div class="lab-image">🏭</div>
+                <div class="lab-content">
+                    <span class="lab-badge">AI Automation</span>
+                    <h3>Warehouse Stock Validation AI</h3>
+                    <p>End-to-end inventory reconciliation system combining PowerApps, Power Automate, and Azure AI Services for automated mismatch detection and real-time alerting.</p>
+                    <div class="lab-tech">
+                        <span class="tech-tag">Power Platform</span>
+                        <span class="tech-tag">Azure AI</span>
+                        <span class="tech-tag">Power BI</span>
+                        <span class="tech-tag">Dataverse</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card fade-in">
+                <div class="lab-image">🔍</div>
+                <div class="lab-content">
+                    <span class="lab-badge">Vector Search</span>
+                    <h3>Contextual Knowledge System</h3>
+                    <p>Vector embedding pipeline for semantic search and retrieval-augmented generation (RAG), enabling intelligent document querying and contextual AI responses.</p>
+                    <div class="lab-tech">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">FAISS</span>
+                        <span class="tech-tag">LangChain</span>
+                        <span class="tech-tag">Azure OpenAI</span>
+                        <span class="tech-tag">ChromaDB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Journey Section -->
+    <section class="section journey-section" id="journey">
+        <div class="section-header fade-in">
+            <span class="section-badge">My Path</span>
+            <h2 class="section-title">The Autodidact Journey</h2>
+            <p class="section-description">
+                Self-taught, certification-backed, and battle-tested. Here's how I built my technical foundation—one course, one project, one certification at a time.
+            </p>
+        </div>
+
+        <div class="journey-timeline">
+            <!-- Microsoft Certifications -->
+            <div class="timeline-section fade-in">
+                <div class="timeline-header">
+                    <h3>🏆 Microsoft Certifications</h3>
+                    <span class="cert-count">4 Certifications</span>
+                </div>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-badge microsoft">✓</div>
+                        <div class="timeline-content">
+                            <h4>PL-300: Power BI Data Analyst Associate</h4>
+                            <p class="timeline-provider">Microsoft</p>
+                            <p class="timeline-skills">Power BI, DAX, M Language, Data Modeling, Report Automation</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge microsoft">✓</div>
+                        <div class="timeline-content">
+                            <h4>PL-200: Power Platform Functional Consultant</h4>
+                            <p class="timeline-provider">Microsoft</p>
+                            <p class="timeline-skills">PowerApps, Power Automate, Dataverse, Solution Architecture</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge microsoft">✓</div>
+                        <div class="timeline-content">
+                            <h4>DA-100: Azure Data Analyst (Legacy)</h4>
+                            <p class="timeline-provider">Microsoft</p>
+                            <p class="timeline-skills">Azure Synapse, Power BI Integration, Data Preparation</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge microsoft">✓</div>
+                        <div class="timeline-content">
+                            <h4>Microsoft PowerUp Program</h4>
+                            <p class="timeline-provider">Microsoft</p>
+                            <p class="timeline-skills">Advanced PowerApps Development, Solution Deployment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI & Machine Learning -->
+            <div class="timeline-section fade-in">
+                <div class="timeline-header">
+                    <h3>🤖 AI & Machine Learning</h3>
+                    <span class="cert-count">4 Projects + Certifications</span>
+                </div>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-badge ibm">✓</div>
+                        <div class="timeline-content">
+                            <h4>Vector Databases Fundamentals Specialization</h4>
+                            <p class="timeline-provider">IBM via Coursera</p>
+                            <p class="timeline-skills">Vector Embeddings, Semantic Search, RAG Pipelines, FAISS, ChromaDB</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge ibm">✓</div>
+                        <div class="timeline-content">
+                            <h4>AI Recommendation Systems (Badge Project)</h4>
+                            <p class="timeline-provider">IBM</p>
+                            <p class="timeline-skills">Built recommendation engine, earned IBM project badge</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge tinyml">✓</div>
+                        <div class="timeline-content">
+                            <h4>TinyML SIM Card Detection System</h4>
+                            <p class="timeline-provider">Edge Impulse (Self-Project)</p>
+                            <p class="timeline-skills">Trained model to 100% accuracy, deployed on Raspberry Pi</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge azure">🔄</div>
+                        <div class="timeline-content">
+                            <h4>Azure Machine Learning</h4>
+                            <p class="timeline-provider">Microsoft via Coursera</p>
+                            <p class="timeline-skills">Model Training & Deployment in Azure ML Studio</p>
+                            <span class="status-badge in-progress">In Progress</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automation Platforms -->
+            <div class="timeline-section fade-in">
+                <div class="timeline-header">
+                    <h3>⚡ Automation Mastery</h3>
+                    <span class="cert-count">5 Certifications</span>
+                </div>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-badge make">✓</div>
+                        <div class="timeline-content">
+                            <h4>Make Academy: Basics → Advanced</h4>
+                            <p class="timeline-provider">Make (formerly Integromat)</p>
+                            <p class="timeline-skills">Workflow Orchestration, API Automation, AI Integration</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge n8n">✓</div>
+                        <div class="timeline-content">
+                            <h4>n8n Level 1 & 2 Certifications</h4>
+                            <p class="timeline-provider">n8n Academy</p>
+                            <p class="timeline-skills">Workflow Automation, Multi-Agent Orchestration, AI Agents</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data & Analytics -->
+            <div class="timeline-section fade-in">
+                <div class="timeline-header">
+                    <h3>📊 Data Analytics & Engineering</h3>
+                    <span class="cert-count">2 Specializations</span>
+                </div>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-badge google">🔄</div>
+                        <div class="timeline-content">
+                            <h4>Google Advanced Data Analytics Specialization</h4>
+                            <p class="timeline-provider">Google via Coursera</p>
+                            <p class="timeline-skills">Regression, Predictive Modeling, Data Storytelling</p>
+                            <span class="status-badge in-progress">In Progress</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge microsoft">✓</div>
+                        <div class="timeline-content">
+                            <h4>Power BI Advanced Visualization</h4>
+                            <p class="timeline-provider">Microsoft Learn</p>
+                            <p class="timeline-skills">DAX Optimization, Power Query, Enterprise Modeling</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programming & DevOps -->
+            <div class="timeline-section fade-in">
+                <div class="timeline-header">
+                    <h3>💻 Programming Foundations</h3>
+                    <span class="cert-count">4 Courses</span>
+                </div>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-badge python">✓</div>
+                        <div class="timeline-content">
+                            <h4>Python for Beginners</h4>
+                            <p class="timeline-provider">Microsoft / Coursera</p>
+                            <p class="timeline-skills">Python Scripting, Automation Logic</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge js">✓</div>
+                        <div class="timeline-content">
+                            <h4>JavaScript Basics</h4>
+                            <p class="timeline-provider">Codecademy</p>
+                            <p class="timeline-skills">DOM, ES6, Functions, Async Programming</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge git">✓</div>
+                        <div class="timeline-content">
+                            <h4>Git & GitHub Version Control</h4>
+                            <p class="timeline-provider">Google / Coursera</p>
+                            <p class="timeline-skills">Repositories, Branching, Collaboration</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge docker">✓</div>
+                        <div class="timeline-content">
+                            <h4>Getting Started with Docker</h4>
+                            <p class="timeline-provider">IBM / Coursera</p>
+                            <p class="timeline-skills">Containerization, Dockerfile, Deployment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- IoT & Edge Computing -->
+            <div class="timeline-section fade-in">
+                <div class="timeline-header">
+                    <h3>🔧 IoT & Edge Computing</h3>
+                    <span class="cert-count">2 Projects</span>
+                </div>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-badge rpi">✓</div>
+                        <div class="timeline-content">
+                            <h4>Physical Computing with Python (Raspberry Pi)</h4>
+                            <p class="timeline-provider">Microsoft / FutureLearn</p>
+                            <p class="timeline-skills">GPIO Programming, Sensors, Motor Control</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-badge project">✓</div>
+                        <div class="timeline-content">
+                            <h4>Conveyor Vision System (TinyML + IoT)</h4>
+                            <p class="timeline-provider">4D Analytics Lab (Self-Built)</p>
+                            <p class="timeline-skills">Raspberry Pi, Flask Server, AI Pipeline, AWS Integration</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journey Stats -->
+        <div class="journey-stats fade-in">
+            <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Courses & Certifications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Major Platforms Mastered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Self-Taught & Applied</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Industries Served</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <div class="about-text fade-in">
+                <h2>Working Solo, Delivering Enterprise-Grade Solutions</h2>
+                <p>I'm <span class="emphasis">Isaacson Shoko</span>, an independent AI systems consultant who specializes in bridging the gap between business operations and cutting-edge technology.</p>
+                <p>Operating as a solopreneur allows me to stay lean, move fast, and deliver highly customized solutions without the overhead of a large team. Every project gets my full attention and technical depth.</p>
+                <p>From building edge AI systems with Raspberry Pi to orchestrating cloud data pipelines on Azure, I bring the full stack to your problems—designing, coding, deploying, and supporting intelligent systems that actually work.</p>
+                
+                <div class="highlights">
+                    <div class="highlight-item">
+                        <strong>✓ Full-Stack Autonomy</strong>
+                        End-to-end delivery from concept to deployment
+                    </div>
+                    <div class="highlight-item">
+                        <strong>✓ Direct Communication</strong>
+                        No account managers—you work directly with me
+                    </div>
+                    <div class="highlight-item">
+                        <strong>✓ Rapid Iteration</strong>
+                        Agile approach with quick turnaround
+                    </div>
+                    <div class="highlight-item">
+                        <strong>✓ Cross-Industry Insight</strong>
+                        Experience across logistics, finance, mining, manufacturing
+                    </div>
+                </div>
+            </div>
+            <img src="images/profile.jpg" alt="Isaacson Shoko" class="about-image fade-in">
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h2>Let's Build Something Intelligent Together</h2>
+                <p>Whether you need AI automation, edge computing solutions, or data infrastructure—I'm here to help turn your vision into reality.</p>
+            </div>
+
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-card">
+                        <div class="info-icon">✉️</div>
+                        <h3>Email</h3>
+                        <a href="mailto:info@4danalytics.co.za">info@4danalytics.co.za</a>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">💼</div>
+                        <h3>LinkedIn</h3>
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/" target="_blank">Connect with me</a>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">📍</div>
+                        <h3>Location</h3>
+                        <p>Johannesburg, South Africa</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">⏰</div>
+                        <h3>Response Time</h3>
+                        <p>Within 24 hours</p>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <h3>Send Me a Message</h3>
+                    <div class="form-group">
+                        <label for="name">Your Name *</label>
+                        <input type="text" id="name" name="name" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Your Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="john@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" id="company" name="company" placeholder="Your Company">
+                    </div>
+                    <div class="form-group">
+                        <label for="project">Project Type *</label>
+                        <select id="project" name="project" required>
+                            <option value="">Select a service</option>
+                            <option value="AI & Data Engineering">AI & Data Engineering</option>
+                            <option value="Intelligent Automation">Intelligent Automation</option>
+                            <option value="Edge AI & IoT">Edge AI & IoT</option>
+                            <option value="Cloud Architecture">Cloud Architecture</option>
+                            <option value="Consulting">General Consulting</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Project Details *</label>
+                        <textarea id="message" name="message" required rows="5" placeholder="Tell me about your project, timeline, and what you're looking to achieve..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">
+                        <span class="btn-text">Send Message</span>
+                        <span class="btn-loading" style="display: none;">Sending...</span>
+                    </button>
+                    <div class="form-message" id="formMessage"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 4D Analytics | Isaacson Shoko</p>
+            <p>Independent AI Systems Consultant</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">Johannesburg, South Africa</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Contact form submission
+        const contactForm = document.getElementById('contactForm');
+        const formMessage = document.getElementById('formMessage');
+        const btnText = document.querySelector('.btn-text');
+        const btnLoading = document.querySelector('.btn-loading');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                company: document.getElementById('company').value,
+                project: document.getElementById('project').value,
+                message: document.getElementById('message').value,
+                timestamp: new Date().toISOString(),
+                source: '4D Analytics Website'
+            };
+
+            // Show loading state
+            contactForm.querySelector('button[type="submit"]').disabled = true;
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            formMessage.style.display = 'none';
+
+            try {
+                // Replace with your webhook URL (Make.com, n8n, Zapier, etc.)
+                const webhookUrl = 'YOUR_WEBHOOK_URL_HERE';
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    formMessage.textContent = '✅ Message sent successfully! I\'ll get back to you within 24 hours.';
+                    formMessage.className = 'form-message success';
+                    contactForm.reset();
+                } else {
+                    throw new Error('Failed to send message');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                formMessage.textContent = '❌ Oops! Something went wrong. Please email me directly at info@4danalytics.co.za';
+                formMessage.className = 'form-message error';
+            } finally {
+                // Reset button state
+                contactForm.querySelector('button[type="submit"]').disabled = false;
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+            </div>
+
+            <div class="lab-card fade-in">
+                <div class="lab-image">🏭</div>
+                <div class="lab-content">
+                    <span class="lab-badge">AI Automation</span>
+                    <h3>Warehouse Stock Validation AI</h3>
+                    <p>End-to-end inventory reconciliation system combining PowerApps, Power Automate, and Azure AI Services for automated mismatch detection and real-time alerting.</p>
+                    <div class="lab-tech">
+                        <span class="tech-tag">Power Platform</span>
+                        <span class="tech-tag">Azure AI</span>
+                        <span class="tech-tag">Power BI</span>
+                        <span class="tech-tag">Dataverse</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lab-card fade-in">
+                <div class="lab-image">🔍</div>
+                <div class="lab-content">
+                    <span class="lab-badge">Vector Search</span>
+                    <h3>Contextual Knowledge System</h3>
+                    <p>Vector embedding pipeline for semantic search and retrieval-augmented generation (RAG), enabling intelligent document querying and contextual AI responses.</p>
+                    <div class="lab-tech">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">FAISS</span>
+                        <span class="tech-tag">LangChain</span>
+                        <span class="tech-tag">Azure OpenAI</span>
+                        <span class="tech-tag">ChromaDB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills & Certifications Section -->
+    <section class="section skills-section" id="skills">
+        <div class="section-header fade-in">
+            <span class="section-badge">Expertise</span>
+            <h2 class="section-title">Skills & Certifications</h2>
+            <p class="section-description">
+                A deep, hands-on technical skillset backed by industry certifications.
+            </p>
+        </div>
+
+        <div class="skills-container">
+            <div class="skills-column fade-in">
+                <h3>Technical Competencies</h3>
+                
+                <div class="skill-category">
+                    <h4>AI & Machine Learning</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Azure ML</span>
+                        <span class="skill-tag">Python (scikit-learn)</span>
+                        <span class="skill-tag">TensorFlow Lite</span>
+                        <span class="skill-tag">Edge Impulse</span>
+                        <span class="skill-tag">LangChain</span>
+                        <span class="skill-tag">Azure OpenAI</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h4>Data Engineering</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Azure Synapse</span>
+                        <span class="skill-tag">Data Factory</span>
+                        <span class="skill-tag">Python (Pandas)</span>
+                        <span class="skill-tag">SQL</span>
+                        <span class="skill-tag">Power BI (DAX/M)</span>
+                        <span class="skill-tag">ETL Pipelines</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h4>Automation & Integration</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Power Automate</span>
+                        <span class="skill-tag">n8n</span>
+                        <span class="skill-tag">PowerApps</span>
+                        <span class="skill-tag">REST APIs</span>
+                        <span class="skill-tag">Azure Functions</span>
+                        <span class="skill-tag">Logic Apps</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h4>Edge Computing & IoT</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Raspberry Pi</span>
+                        <span class="skill-tag">GPIO Control</span>
+                        <span class="skill-tag">OpenCV</span>
+                        <span class="skill-tag">TinyML</span>
+                        <span class="skill-tag">MQTT</span>
+                        <span class="skill-tag">Azure IoT</span>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h4>Cloud & DevOps</h4>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Azure Cloud</span>
+                        <span class="skill-tag">AWS (S3, Lambda)</span>
+                        <span class="skill-tag">Git/GitHub</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">CI/CD</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="skills-column fade-in">
+                <h3>Professional Certifications</h3>
+                <div class="certification-container">
+                    <p style="color: #64748b; margin-bottom: 1.5rem; font-weight: 500;">Verified certifications via LinkedIn:</p>
+                    <div class="certification-grid">
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank" class="cert-card">
+                            <div class="cert-icon microsoft-cert">📊</div>
+                            <div class="cert-info">
+                                <h4>PL-300</h4>
+                                <p>Power BI Data Analyst</p>
+                                <span class="cert-provider">Microsoft</span>
+                            </div>
+                        </a>
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank" class="cert-card">
+                            <div class="cert-icon microsoft-cert">⚡</div>
+                            <div class="cert-info">
+                                <h4>PL-200</h4>
+                                <p>Power Platform Consultant</p>
+                                <span class="cert-provider">Microsoft</span>
+                            </div>
+                        </a>
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank" class="cert-card">
+                            <div class="cert-icon ibm-cert">🤖</div>
+                            <div class="cert-info">
+                                <h4>Vector Databases</h4>
+                                <p>Fundamentals Specialization</p>
+                                <span class="cert-provider">IBM</span>
+                            </div>
+                        </a>
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank" class="cert-card">
+                            <div class="cert-icon ibm-cert">💡</div>
+                            <div class="cert-info">
+                                <h4>AI Recommendations</h4>
+                                <p>Project Badge</p>
+                                <span class="cert-provider">IBM</span>
+                            </div>
+                        </a>
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank" class="cert-card">
+                            <div class="cert-icon azure-cert">☁️</div>
+                            <div class="cert-info">
+                                <h4>DA-100</h4>
+                                <p>Azure Data Analyst</p>
+                                <span class="cert-provider">Microsoft</span>
+                            </div>
+                        </a>
+                        <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank" class="cert-card">
+                            <div class="cert-icon make-cert">🔄</div>
+                            <div class="cert-info">
+                                <h4>Make Academy</h4>
+                                <p>Advanced Automation</p>
+                                <span class="cert-provider">Make</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="linkedin-note">
+                        🔗 <strong>View all certifications</strong> on my <a href="https://www.linkedin.com/in/isaacson-shoko-851bbb275/details/certifications/" target="_blank">LinkedIn profile</a>

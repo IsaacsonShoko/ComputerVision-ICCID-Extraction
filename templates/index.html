@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Card Processing System - OCR Optimized</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A6FA5 0%, #166088 100%);
+            min-height: 100vh;
+            color: #2D3748;
+        }
+
+        .container {
+            width: 98%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .logo {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            height: 40px;
+            width: auto;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .ocr-badge {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: linear-gradient(45deg, #38A169, #2F855A);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.3);
+        }
+
+        /* Audio feedback styling */
+        .audio-hidden {
+            display: none;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            height: calc(100vh - 150px);
+            margin-bottom: 0;
+        }
+
+        .top-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            height: calc((100vh - 150px) * 0.3);
+            min-height: 180px;
+        }
+
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            height: calc((100vh - 150px) * 0.7);
+            min-height: 400px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-height: 100%;
+        }
+        
+        .card-content {
+            overflow: hidden;
+            padding-right: 8px;
+            flex: 1;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #2D3748;
+            border-bottom: 2px solid #CBD5E0;
+            padding-bottom: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .performance-badge {
+            background: linear-gradient(45deg, #3182CE, #2B6CB0);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .control-panel {
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-running { background-color: #38A169; }
+        .status-stopped { background-color: #E53E3E; }
+        .status-paused { background-color: #D69E2E; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .small-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2D3748;
+            font-size: 0.9rem;
+        }
+
+        .spacer {
+            flex: 1;
+            min-height: 20px;
+        }
+
+        .system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: #4A5568;
+            cursor: pointer;
+            padding: 6px;
+            border: 2px solid #CBD5E0;
+            border-radius: 6px;
+            transition: all 0.2s;
+            text-align: center;
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .radio-label:not(.disabled):hover {
+            background: #F7FAFC;
+            border-color: #4A6FA5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .radio-label.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #F7FAFC;
+        }
+
+        .radio-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-label input[type="radio"]:checked + span {
+            color: #4A6FA5;
+            font-weight: 600;
+        }
+
+        .radio-label input[type="radio"]:checked + span::before {
+            content: '✓';
+            margin-right: 6px;
+            font-size: 14px;
+        }
+
+        .radio-label input[type="radio"]:checked + span::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #4A6FA5;
+        }
+
+        .status-group {
+            text-align: right;
+        }
+
+        .status-display {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.9rem;
+            padding: 4px 8px;
+            background: #F7FAFC;
+            border-radius: 4px;
+            border: 1px solid #E2E8F0;
+        }
+
+        .status-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .control-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #E2E8F0;
+            background: rgba(255, 255, 255, 0.95);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .btn-icon {
+            margin-right: 4px;
+            font-size: 12px;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #CBD5E0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: white;
+        }
+
+        .form-group select:focus, .form-group input:focus {
+            outline: none;
+            border-color: #4A6FA5;
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
+        }
+
+        .btn {
+            padding: 4px 8px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            min-width: 80px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4A6FA5, #166088);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 111, 165, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #E53E3E, #C53030);
+            color: white;
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #D69E2E, #B7791F);
+            color: white;
+            box-shadow: 0 4px 15px rgba(214, 158, 46, 0.3);
+        }
+
+        .btn-warning:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(214, 158, 46, 0.4);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            height: 100%;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 6px;
+            background: linear-gradient(45deg, #F7FAFC, #EDF2F7);
+            border-radius: 6px;
+            border-left: 3px solid #4A6FA5;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #4A6FA5;
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .log-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #1A202C, #2D3748);
+            color: #E2E8F0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 1px solid rgba(74, 111, 165, 0.3);
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(74, 111, 165, 0.2);
+        }
+
+        .log-timestamp {
+            color: #68D391;
+            margin-right: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background-color: #C6F6D5;
+            color: #22543D;
+            border-left: 4px solid #38A169;
+        }
+
+        .alert-error {
+            background-color: #FED7D7;
+            color: #742A2A;
+            border-left: 4px solid #E53E3E;
+        }
+
+        .camera-feed {
+            width: 100%;
+            max-width: 100%;
+            height: 450px;
+            background: #2D3748;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #4A5568;
+            position: relative;
+        }
+
+        .camera-feed img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            background: #1a202c;
+        }
+
+        .camera-feed .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #A0AEC0;
+            text-align: center;
+        }
+
+        .camera-feed .error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #E53E3E;
+            text-align: center;
+        }
+
+        .feed-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+
+        .feed-controls {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .feed-status {
+            font-size: 0.9em;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                height: auto;
+            }
+
+            .top-row,
+            .bottom-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            }
+
+            .card {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden audio element for shutter sound feedback -->
+    <audio id="shutterSound" class="audio-hidden" preload="auto">
+        <source src="/static/camera_shutter.mpeg" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <div class="container">
+        <div class="header">
+            <img src="/static/images/4d-logo.png" alt="4D Analytics Logo" class="logo">
+            <h1>SIM Card Processing System</h1>
+            <p>Automated Camera & Conveyor Belt Control - OCR Optimized</p>
+            <div class="ocr-badge">OCR READY</div>
+        </div>
+
+        <div class="dashboard">
+            <div class="top-row">
+                <div class="card">
+                    <div class="system-header">
+                        <h3>System Control</h3>
+                        <div class="status-display">
+                            <span class="status-indicator status-stopped" id="statusIndicator"></span>
+                            <span id="statusText" class="status-text">Stopped</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <div id="alert-container"></div>
+                        
+                        <div class="form-group provider-group">
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="serviceProvider" value="MTN" id="mtn">
+                                    <span>MTN</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="serviceProvider" value="CellC" id="cellc">
+                                    <span>CellC</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="serviceProvider" value="Telkom" id="telkom">
+                                    <span>Telkom</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="serviceProvider" value="Vodacom" id="vodacom">
+                                    <span>Vodacom</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button class="btn btn-primary" id="startBtn" onclick="startSystem()" title="First select a provider, then click to start processing">
+                            <span class="btn-icon">▶</span>
+                            Start
+                        </button>
+                        <button class="btn btn-warning" id="pauseBtn" onclick="pauseSystem()" disabled title="Temporarily pause the current processing">
+                            <span class="btn-icon">⏸</span>
+                            Pause
+                        </button>
+                        <button class="btn btn-warning" id="resumeBtn" onclick="resumeSystem()" disabled title="Resume processing after pausing">
+                            <span class="btn-icon">⏵</span>
+                            Resume
+                        </button>
+                        <button class="btn btn-danger" id="stopBtn" onclick="stopSystem()" disabled title="Stop and finalize the current processing">
+                            <span class="btn-icon">⏹</span>
+                            Stop
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Live Statistics <span class="performance-badge">REAL-TIME</span></h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="imageCount">0</div>
+                            <div class="stat-label">SIM Cards Uploaded</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="frameCount">0</div>
+                            <div class="stat-label">Frames Processed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="runTime">00:00:00</div>
+                            <div class="stat-label">Runtime</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="currentProvider">-</div>
+                            <div class="stat-label">Current Provider</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="avgCaptureTime">-</div>
+                            <div class="stat-label">Avg Capture (s)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="avgUploadTime">-</div>
+                            <div class="stat-label">Avg Upload (s)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="imagesPerMinute">-</div>
+                            <div class="stat-label">Frames/Min</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="streamFps">-</div>
+                            <div class="stat-label">Stream FPS</div>
+                        </div>
+                        <div class="stat-item" style="background: linear-gradient(135deg, #48BB78, #38A169);">
+                            <div class="stat-value" id="detectionCount" style="color: white;">🔍</div>
+                            <div class="stat-label" style="color: white;">SIM Cards Detected</div>
+                        </div>
+                        <div class="stat-item" style="background: linear-gradient(135deg, #4299E1, #3182CE);">
+                            <div class="stat-value" id="detectionConfidence" style="color: white;">-</div>
+                            <div class="stat-label" style="color: white;">Detection Confidence</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-row">
+                <div class="card">
+                    <h3>Live Camera Feed <span class="performance-badge" id="streamQuality">HD Ready</span></h3>
+                    <div class="camera-feed" id="cameraFeed">
+                        <div class="loading" id="feedLoading">
+                            Initializing HD camera feed...
+                        </div>
+                        <img id="cameraImage" class="hidden" alt="Live camera feed">
+                        <div class="error hidden" id="feedError">
+                            HD Camera feed unavailable
+                        </div>
+                        <div class="feed-overlay hidden" id="feedOverlay">
+                            <div id="streamStats">Connecting...</div>
+                        </div>
+                    </div>
+                    <div class="feed-controls">
+                        <div class="feed-status" id="feedStatus">Ready</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>System Log <span class="performance-badge" id="logCount">2 entries</span></h3>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-entry">
+                            <span class="log-timestamp">[System]</span>
+                            OCR-optimized system initialized. Ready for high-resolution processing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced global variables for OCR optimization
+        let systemRunning = false;
+        let systemPaused = false;
+        let startTime = null;
+        let statusInterval = null;
+        let runTimeInterval = null;
+        let cameraFeedActive = false;
+        let socket = null;
+        let logEntryCount = 1;
+        let connected_clients = 0;
+
+        // API endpoints
+        const API_BASE = '/api';
+
+        // Initialize the enhanced OCR-optimized system
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing OCR-optimized system...');
+            
+            // Initialize enhanced Socket.IO connection
+            initializeEnhancedSocketIO();
+            
+            // Initialize other components
+            updateStatus();
+            startStatusPolling();
+            initializeCameraFeed();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Add event listeners to radio buttons
+            const radioInputs = document.querySelectorAll('input[name="serviceProvider"]');
+            radioInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const startBtn = document.getElementById('startBtn');
+                    startBtn.disabled = !document.querySelector('input[name="serviceProvider"]:checked');
+                });
+            });
+
+            // Initially disable start button if no provider selected
+            const startBtn = document.getElementById('startBtn');
+            startBtn.disabled = !document.querySelector('input[name="serviceProvider"]:checked');
+        }
+
+        // Simple Socket.IO initialization (like working diagnostics page)
+        function initializeEnhancedSocketIO() {
+            console.log('Initializing SocketIO connection...');
+            
+            if (socket) {
+                socket.disconnect();
+            }
+            
+            socket = io({
+                timeout: 10000,
+                forceNew: true
+            });
+
+            socket.on('connect', function() {
+                console.log('✅ SocketIO connected successfully');
+                addLogEntry('System connected');
+                document.getElementById('feedStatus').textContent = 'Connected';
+            });
+
+            socket.on('disconnect', function() {
+                console.log('❌ SocketIO disconnected');
+                addLogEntry('System disconnected');
+                document.getElementById('feedError').classList.remove('hidden');
+                document.getElementById('cameraImage').classList.add('hidden');
+                document.getElementById('feedStatus').textContent = 'Disconnected';
+            });
+
+            socket.on('connect_error', function(error) {
+                console.log(`❌ SocketIO connection error: ${error}`);
+                addLogEntry('Connection failed');
+            });
+
+            socket.on('frame_update', function(data) {
+                const cameraImage = document.getElementById('cameraImage');
+                const feedLoading = document.getElementById('feedLoading');
+                const feedError = document.getElementById('feedError');
+                
+                if (data.frame) {
+                    try {
+                        cameraImage.src = `data:image/jpeg;base64,${data.frame}`;
+                        cameraImage.classList.remove('hidden');
+                        feedLoading.classList.add('hidden');
+                        feedError.classList.add('hidden');
+                        
+                        document.getElementById('feedStatus').textContent = 'Live feed active';
+                        
+                        if (data.resolution) {
+                            document.getElementById('streamQuality').textContent = data.resolution;
+                        }
+                        
+                        console.log('📹 Frame received:', data.resolution);
+                        
+                    } catch (error) {
+                        console.error('Error displaying frame:', error);
+                        document.getElementById('feedStatus').textContent = 'Error displaying video';
+                    }
+                } else {
+                    console.log('⚠️ Frame update without frame data');
+                    document.getElementById('feedStatus').textContent = 'Waiting for video data...';
+                }
+            });
+
+            socket.on('stream_stats', function(data) {
+                document.getElementById('streamFps').textContent = data.fps ? data.fps.toFixed(1) : '0.0';
+            });
+
+            socket.on('performance_update', function(data) {
+                updatePerformanceMetrics(data.performance);
+                document.getElementById('imageCount').textContent = data.image_count;
+            });
+
+            socket.on('system_started', function(data) {
+                addLogEntry(`System started - Provider: ${data.service_provider}`);
+                showAlert(`System started with ${data.service_provider}`, 'success');
+            });
+
+            socket.on('system_stopped', function(data) {
+                addLogEntry(`System stopped - Final: ${data.final_image_count} images`);
+            });
+
+            socket.on('system_paused', function() {
+                systemPaused = true;
+                updateUIState();
+                addLogEntry('System paused');
+            });
+
+            socket.on('system_resumed', function() {
+                systemPaused = false;
+                updateUIState();
+                addLogEntry('System resumed');
+            });
+
+            // Shutter sound feedback
+            socket.on('shutter_sound', function(data) {
+                console.log('📸 Shutter sound triggered for image', data.image_number);
+                playShutterSound();
+                
+                // Optional: Add visual feedback
+                addLogEntry(`📸 Capturing image ${data.image_number}...`);
+            });
+
+            console.log('SocketIO event handlers initialized');
+        }
+
+        function updateSystemFromStatus(status) {
+            // Update system state from comprehensive status
+            if (status.running !== undefined) {
+                systemRunning = status.running;
+            }
+            if (status.paused !== undefined) {
+                systemPaused = status.paused;
+            }
+            if (status.image_count !== undefined) {
+                document.getElementById('imageCount').textContent = status.image_count;
+            }
+            if (status.service_provider !== undefined) {
+                document.getElementById('currentProvider').textContent = status.service_provider || 'None';
+            }
+            
+            updateUIState();
+        }
+
+        function updateErrorStatus(errorMessage, timestamp) {
+            // Update error status in UI
+            const errorElement = document.getElementById('errorStatus');
+            if (errorElement) {
+                errorElement.textContent = `Error: ${errorMessage}`;
+                errorElement.classList.add('error-active');
+                errorElement.setAttribute('title', `Error at ${timestamp}: ${errorMessage}`);
+            }
+        }
+
+        function updateQueueStatus(uploadQueueSize, webhookQueueSize, maxQueueSize) {
+            // Update queue status indicators
+            const uploadIndicator = document.getElementById('uploadQueueStatus');
+            const webhookIndicator = document.getElementById('webhookQueueStatus');
+            
+            if (uploadIndicator) {
+                uploadIndicator.textContent = `${uploadQueueSize}/${maxQueueSize}`;
+                uploadIndicator.className = uploadQueueSize >= maxQueueSize ? 'queue-full' : 'queue-normal';
+            }
+            
+            if (webhookIndicator) {
+                webhookIndicator.textContent = `${webhookQueueSize}/${maxQueueSize}`;
+                webhookIndicator.className = webhookQueueSize >= maxQueueSize ? 'queue-full' : 'queue-normal';
+            }
+        }
+
+        function updatePerformanceIndicator(elementId, value, unit) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = value.toFixed(1) + (unit || '');
+                
+                // Color-code based on performance
+                if (value >= 90) {
+                    element.className = 'performance-excellent';
+                } else if (value >= 70) {
+                    element.className = 'performance-good';
+                } else if (value >= 50) {
+                    element.className = 'performance-fair';
+                } else {
+                    element.className = 'performance-poor';
+                }
+            }
+        }
+
+        function updatePerformanceMetrics(performance) {
+            if (performance.avg_capture_time) {
+                document.getElementById('avgCaptureTime').textContent = performance.avg_capture_time.toFixed(2);
+            }
+            
+            if (performance.avg_upload_time) {
+                document.getElementById('avgUploadTime').textContent = performance.avg_upload_time.toFixed(2);
+            }
+            
+            // Calculate enhanced images per minute for OCR processing
+            const totalTime = (performance.avg_capture_time || 0) + (performance.avg_upload_time || 0) + 0.5;
+            if (totalTime > 0) {
+                const imagesPerMin = 60 / totalTime;
+                document.getElementById('imagesPerMinute').textContent = imagesPerMin.toFixed(1);
+            }
+        }
+
+        // Initialize enhanced camera feed
+        function initializeCameraFeed() {
+            document.getElementById('feedStatus').textContent = 'Connecting to HD OCR stream...';
+        }
+
+        // Start enhanced status polling
+        function startStatusPolling() {
+            statusInterval = setInterval(updateStatus, 2000);
+        }
+
+        // Enhanced system status update
+        async function updateStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/status`);
+                const status = await response.json();
+                
+                systemRunning = status.running;
+                systemPaused = status.paused;
+                
+                updateUI(status);
+                
+                if (status.performance) {
+                    updatePerformanceMetrics(status.performance);
+                }
+            } catch (error) {
+                console.error('Error fetching enhanced status:', error);
+            }
+        }
+
+        function updateUIState() {
+            updateUI({
+                running: systemRunning,
+                paused: systemPaused,
+                image_count: parseInt(document.getElementById('imageCount').textContent) || 0,
+                service_provider: document.getElementById('currentProvider').textContent !== '-' ? 
+                    document.getElementById('currentProvider').textContent : null
+            });
+        }
+
+        // Enhanced UI update with OCR optimization indicators
+        function updateUI(status) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const startBtn = document.getElementById('startBtn');
+            const pauseBtn = document.getElementById('pauseBtn');
+            const resumeBtn = document.getElementById('resumeBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const imageCount = document.getElementById('imageCount');
+            const currentProvider = document.getElementById('currentProvider');
+            const radioLabels = document.querySelectorAll('.radio-label');
+            const radioInputs = document.querySelectorAll('input[name="serviceProvider"]');
+
+            // Update status indicator and text with OCR context
+            if (status.running && !status.paused) {
+                statusIndicator.className = 'status-indicator status-running';
+                statusText.textContent = 'Running';
+            } else if (status.running && status.paused) {
+                statusIndicator.className = 'status-indicator status-paused';
+                statusText.textContent = 'Paused';
+            } else {
+                statusIndicator.className = 'status-indicator status-stopped';
+                statusText.textContent = 'Stopped';
+            }
+
+            // Update button states
+            startBtn.disabled = status.running || !document.querySelector('input[name="serviceProvider"]:checked');
+            pauseBtn.disabled = !status.running || status.paused;
+            resumeBtn.disabled = !status.running || !status.paused;
+            stopBtn.disabled = !status.running;
+
+            // Update service provider controls
+            radioLabels.forEach(label => {
+                if (status.running) {
+                    label.classList.add('disabled');
+                } else {
+                    label.classList.remove('disabled');
+                }
+            });
+
+            radioInputs.forEach(input => {
+                input.disabled = status.running;
+            });
+
+            // Update statistics
+            imageCount.textContent = status.image_count || 0;  // SIM cards uploaded
+            document.getElementById('frameCount').textContent = status.frame_count || 0;  // Frames processed
+            currentProvider.textContent = status.service_provider || '-';
+
+            // Update detection statistics
+            if (status.detection_enabled) {
+                const detectionCount = document.getElementById('detectionCount');
+                const detectionConfidence = document.getElementById('detectionConfidence');
+                
+                if (status.detection_count !== null && status.detection_count !== undefined) {
+                    detectionCount.textContent = status.detection_count > 0 ? `🎯 ${status.detection_count}` : '⏳';
+                } else {
+                    detectionCount.textContent = '🔍';
+                }
+                
+                if (status.detection_stats && status.detection_stats.avg_confidence > 0) {
+                    detectionConfidence.textContent = `${(status.detection_stats.avg_confidence * 100).toFixed(1)}%`;
+                } else {
+                    detectionConfidence.textContent = '-';
+                }
+            } else {
+                document.getElementById('detectionCount').textContent = 'OFF';
+                document.getElementById('detectionConfidence').textContent = 'N/A';
+            }
+
+            // Update performance metrics if available
+            if (status.performance) {
+                updatePerformanceMetrics(status.performance);
+            }
+
+            // Enhanced runtime calculation
+            if (status.start_time) {
+                const start = new Date(status.start_time);
+                const now = new Date();
+                const diff = Math.floor((now - start) / 1000);
+                const hours = Math.floor(diff / 3600);
+                const minutes = Math.floor((diff % 3600) / 60);
+                const seconds = diff % 60;
+                
+                document.getElementById('runTime').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                document.getElementById('runTime').textContent = '00:00:00';
+            }
+
+            // Handle errors
+            if (status.error_message) {
+                showAlert(status.error_message, 'error');
+            }
+        }
+
+        // Enhanced system start with OCR optimization
+        async function startSystem() {
+            console.log('startSystem() called');
+            
+            const selectedProvider = document.querySelector('input[name="serviceProvider"]:checked');
+            console.log('Selected provider:', selectedProvider);
+            
+            if (!selectedProvider) {
+                console.error('No service provider selected');
+                showAlert('Please select a service provider', 'error');
+                return;
+            }
+            
+            const serviceProvider = selectedProvider.value;
+            console.log('Service provider value:', serviceProvider);
+
+            try {
+                console.log('Making API request to start system...');
+                const response = await fetch(`${API_BASE}/start`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ service_provider: serviceProvider })
+                });
+
+                console.log('API response status:', response.status);
+                const result = await response.json();
+                console.log('API response body:', result);
+                
+                if (response.ok) {
+                    showAlert(`Enhanced OCR system started with ${serviceProvider}`, 'success');
+                    addLogEntry(`OCR-optimized system started - Provider: ${serviceProvider}`);
+                    console.log('System started successfully');
+                } else {
+                    console.error('API error response:', result);
+                    showAlert(result.error || 'Unknown error occurred', 'error');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showAlert('Error starting OCR system - check network connection', 'error');
+            }
+        }
+
+        // Enhanced system stop with performance summary
+        async function stopSystem() {
+            try {
+                const response = await fetch(`${API_BASE}/stop`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                showAlert('OCR system stopped', 'success');
+                addLogEntry(`OCR system stopped - Final count: ${result.final_image_count || 0}`);
+                
+                if (result.performance_summary) {
+                    addLogEntry(`Performance: ${JSON.stringify(result.performance_summary)}`);
+                }
+            } catch (error) {
+                showAlert('Error stopping OCR system', 'error');
+                console.error(error);
+            }
+        }
+
+        // Enhanced pause system
+        async function pauseSystem() {
+            try {
+                const response = await fetch(`${API_BASE}/pause`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                showAlert('OCR system paused', 'success');
+                addLogEntry('OCR system paused');
+            } catch (error) {
+                showAlert('Error pausing OCR system', 'error');
+                console.error(error);
+            }
+        }
+
+        // Enhanced resume system
+        async function resumeSystem() {
+            try {
+                const response = await fetch(`${API_BASE}/resume`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                showAlert('OCR system resumed', 'success');
+                addLogEntry('OCR system resumed');
+            } catch (error) {
+                showAlert('Error resuming OCR system', 'error');
+                console.error(error);
+            }
+        }
+
+        // Enhanced alert system
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+
+            // Auto-remove alert after 5 seconds
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Enhanced log entry system with comprehensive level support        
+        
+        // Audio feedback for camera shutter
+        function playShutterSound() {
+            try {
+                const shutterAudio = document.getElementById('shutterSound');
+                if (shutterAudio) {
+                    // Reset audio to beginning and play
+                    shutterAudio.currentTime = 0;
+                    shutterAudio.play().catch(error => {
+                        console.log('Audio play failed (browser restriction):', error);
+                        // Try to enable audio on first user interaction
+                        document.addEventListener('click', enableAudio, { once: true });
+                    });
+                }
+            } catch (error) {
+                console.error('Shutter sound error:', error);
+            }
+        }
+        
+        // Enable audio on first user interaction (browser requirement)
+        function enableAudio() {
+            const shutterAudio = document.getElementById('shutterSound');
+            if (shutterAudio) {
+                shutterAudio.load(); // Reload audio element
+                console.log('📢 Audio enabled for shutter feedback');
+            }
+        }
+        
+        function updateLogCount() {
+            const levelCounts = {
+                total: document.querySelectorAll('.log-entry').length,
+                errors: document.querySelectorAll('.log-level-error, .log-level-critical').length,
+                warnings: document.querySelectorAll('.log-level-warning').length,
+                info: document.querySelectorAll('.log-level-info, .log-level-success').length
+            };
+            
+            const logCountElement = document.getElementById('logCount');
+            if (logCountElement) {
+                if (levelCounts.errors > 0 || levelCounts.warnings > 0) {
+                    logCountElement.textContent = `${levelCounts.total} entries (${levelCounts.errors} errors, ${levelCounts.warnings} warnings)`;
+                } else {
+                    logCountElement.textContent = `${levelCounts.total} entries`;
+                }
+                logCountElement.title = `Total: ${levelCounts.total}, Errors: ${levelCounts.errors}, Warnings: ${levelCounts.warnings}, Info: ${levelCounts.info}`;
+            }
+        }
+        
+        function addLogEntry(message, level = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            if (!logContainer) {
+                console.error('Log container not found');
+                return;
+            }
+            
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-level-${level.toLowerCase()}`;
+            
+            // Level-based styling with enhanced OCR context
+            let levelColor = '#E2E8F0';  // Default
+            let levelIcon = '';
+            
+            switch(level.toLowerCase()) {
+                case 'error':
+                case 'critical':
+                    levelColor = '#E53E3E';
+                    levelIcon = '⚠️';
+                    break;
+                case 'warning':
+                    levelColor = '#D69E2E';
+                    levelIcon = '⚠️';
+                    break;
+                case 'info':
+                    if (message.toLowerCase().includes('ocr') || message.toLowerCase().includes('enhanced')) {
+                        levelColor = '#38A169';
+                        levelIcon = '✅';
+                    } else if (message.toLowerCase().includes('performance') || message.toLowerCase().includes('uploaded')) {
+                        levelColor = '#3182CE';
+                        levelIcon = '📊';
+                    } else if (message.toLowerCase().includes('webhook')) {
+                        levelColor = '#D69E2E';
+                        levelIcon = '🔗';
+                    } else if (message.toLowerCase().includes('throughput') || message.toLowerCase().includes('img/min')) {
+                        levelColor = '#805AD5';
+                        levelIcon = '🚀';
+                    } else {
+                        levelColor = '#4A5568';
+                        levelIcon = 'ℹ️';
+                    }
+                    break;
+                case 'success':
+                    levelColor = '#38A169';
+                    levelIcon = '✅';
+                    break;
+                case 'debug':
+                    levelColor = '#718096';
+                    levelIcon = '🔍';
+                    break;
+            }
+            
+            logEntry.style.color = levelColor;
+            logEntry.style.borderLeft = `3px solid ${levelColor}`;
+            logEntry.style.padding = '4px 8px';
+            logEntry.style.marginBottom = '2px';
+            logEntry.style.backgroundColor = level.toLowerCase() === 'error' ? 'rgba(229, 62, 62, 0.1)' : 
+                                           level.toLowerCase() === 'warning' ? 'rgba(214, 158, 46, 0.1)' : 
+                                           'transparent';
+            
+            logEntry.innerHTML = `
+                <span class="log-timestamp" style="color: #68D391;">[${timestamp}]</span>
+                <span class="log-level" style="margin: 0 4px;">${levelIcon}</span>
+                <span class="log-message">${message}</span>
+            `;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            // Update log count
+            updateLogCount();
+
+            // Keep only last 150 log entries for performance
+            while (logContainer.children.length > 150) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+            
+            // Auto-scroll behavior for errors and warnings
+            if (level.toLowerCase() === 'error' || level.toLowerCase() === 'warning') {
+                logEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // Enhanced page unload handler
+        window.addEventListener('beforeunload', function(e) {
+            if (systemRunning) {
+                e.preventDefault();
+                e.returnValue = 'OCR processing system is still running. Are you sure you want to leave?';
+            }
+        });
+
+        // Initialize log count
+        document.getElementById('logCount').textContent = `${logEntryCount} entries`;
+    </script>
+</body>
+</html>
