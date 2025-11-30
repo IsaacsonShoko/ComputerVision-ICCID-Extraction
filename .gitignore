@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+venv/
+.venv/
+env/
+env.bak/
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
+
+# Node / frontend
+node_modules/
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.pem
+*.key
+*.crt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# IDE
+.idea/
+
+# Static builds
+dist/
+build/

@@ -1,0 +1,412 @@
+{
+  "name": "OcrWorkflow_0910",
+  "nodes": [
+    {
+      "parameters": {
+        "bucketName": "ocrstorage4d",
+        "fileKey": "={{ $json.body.s3_key }}"
+      },
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        -112
+      ],
+      "id": "d4471c35-2d74-4966-9ad6-462cb687bcd9",
+      "name": "Download Image from AWS S3 Bucket",
+      "credentials": {
+        "aws": {
+          "id": "MXYtk76nfI1SLTlF",
+          "name": "AWS account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "72f60ef6-0d33-435c-9452-ec47caf7cb8b",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -528,
+        -112
+      ],
+      "id": "5edadb28-c994-43a8-aa53-1e2936c13cc5",
+      "name": "Webhook listens for events from RaspberryPi",
+      "webhookId": "72f60ef6-0d33-435c-9452-ec47caf7cb8b"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Create a record in Airtable",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appNqAyTrCCMjz7GF",
+          "mode": "list",
+          "cachedResultName": "SimcardImagingProject",
+          "cachedResultUrl": "https://airtable.com/appNqAyTrCCMjz7GF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqxic9rgaZVg42o",
+          "mode": "list",
+          "cachedResultName": "Simcards",
+          "cachedResultUrl": "https://airtable.com/appNqAyTrCCMjz7GF/tblqxic9rgaZVg42o"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Image Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Image_Number', ``, 'number') }}",
+            "Image Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Image_Name', ``, 'string') }}",
+            "Run ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Run_ID', ``, 'string') }}",
+            "ICCID Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ICCID_Number', ``, 'number') }}",
+            "Service Provider": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Service_Provider', ``, 'string') }}",
+            "Timestamp": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Timestamp', ``, 'string') }}",
+            "ImageUrl": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('ImageUrl', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Run ID",
+              "displayName": "Run ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Service Provider",
+              "displayName": "Service Provider",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image Name",
+              "displayName": "Image Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Image Number",
+              "displayName": "Image Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ImageUrl",
+              "displayName": "ImageUrl",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ICCID Number",
+              "displayName": "ICCID Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        496,
+        80
+      ],
+      "id": "e1f4833b-cf12-4c39-8f84-bcc61171ed8b",
+      "name": "Create a record in Airtable for visualisation",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "Hx0xFUwdJTe3zVON",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "text": "you are an OCR specialist responsible for extracting text written at the back of nano simcard pictures provided.Extract all text from the image. Respond only in this format: [extracted text]",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -96,
+        0
+      ],
+      "id": "a894f404-3b19-44ae-ac74-15cdf41cefe4",
+      "name": "Analyze image for OCR gpt40",
+      "credentials": {
+        "openAiApi": {
+          "id": "rcDKClOhVdIOQ2R1",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the SIM card information coming from 2 inputs, Extraction by Analyze image for OCR gpt4o and a code node which generated base64 code for you to anlyse and extract the accurate ICCID number as QA.For MTN SIM cards: The ICCID is a 10-digit numeric code. If 'S' appears, treat it as a '5'.For MTN The ICCID must be 10 digits long, From the provided sequence of digits in the picture, identify the ICCID as the 10-digit sequence that appears most closely grouped, based on character proximity.\\nFor Vodacom,CellC and Telkom SIM cards: The ICCID is 20 digits long and always starts with '89'. Respond ONLY in the following format: ICCID: [extracted number] \nthen create this as an array that you will use to create a record using the airtable tool with this metadata   \n  ImageUrl: {{ $('Webhook listens for events from RaspberryPi').item.json.body.s3_url }} || '',\n  run_id: {{ $('Webhook listens for events from RaspberryPi').item.json.body.run_id }} || '',\n  Image_name: {{ $('Webhook listens for events from RaspberryPi').item.json.body.image_name }} || '',\n  image_number: {{ $('Webhook listens for events from RaspberryPi').item.json.body.image_number }} || '',\n  service_provider: {{ $('Webhook listens for events from RaspberryPi').item.json.body.service_provider }} ||\n  iccid_number: [extracted ICCID number] \n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -112
+      ],
+      "id": "191c8432-4d64-4cd6-84a3-144646d17113",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convert S3 binary image data to base64 string\n// Place this Code node after your S3 Download node\n\n// Get all input items (handles single or multiple images)\nconst items = $input.all();\nconst outputItems = [];\n\nfor (const item of items) {\n  try {\n    // Get binary data from the S3 node\n    const binaryData = item.binary;\n    \n    if (!binaryData) {\n      throw new Error('No binary data found in input');\n    }\n    \n    // Get the first binary property (usually 'data' or filename)\n    const binaryPropertyName = Object.keys(binaryData)[0];\n    const binary = binaryData[binaryPropertyName];\n    \n    if (!binary) {\n      throw new Error(`Binary property '${binaryPropertyName}' is empty`);\n    }\n    \n    // Convert binary buffer to base64\n    const base64String = binary.data.toString('base64');\n    \n    // Detect image MIME type from the binary data or filename\n    let mimeType = binary.mimeType || 'image/jpeg';\n    \n    // If mimeType is not set, try to detect from filename\n    if (!binary.mimeType && binary.fileName) {\n      const ext = binary.fileName.split('.').pop().toLowerCase();\n      const mimeTypes = {\n        'jpg': 'image/jpeg',\n        'jpeg': 'image/jpeg',\n        'png': 'image/png',\n        'gif': 'image/gif',\n        'webp': 'image/webp',\n        'bmp': 'image/bmp',\n        'svg': 'image/svg+xml'\n      };\n      mimeType = mimeTypes[ext] || 'image/jpeg';\n    }\n    \n    // Create data URI format (commonly used by AI APIs)\n    const dataUri = `data:${mimeType};base64,${base64String}`;\n    \n    // Calculate file size\n    const fileSizeKB = (base64String.length * 0.75 / 1024).toFixed(2);\n    \n    // Output the converted data\n    outputItems.push({\n      json: {\n        // Original metadata\n        fileName: binary.fileName || 'image',\n        mimeType: mimeType,\n        fileSize: binary.fileSize,\n        fileSizeKB: `${fileSizeKB} KB`,\n        \n        // Base64 outputs (use these for your AI agent)\n        base64: base64String,                    // Raw base64 string\n        dataUri: dataUri,                         // Data URI format\n        \n        // For debugging\n        base64Length: base64String.length,\n        \n        // Preserve any original JSON data\n        ...item.json\n      }\n    });\n    \n  } catch (error) {\n    // Handle errors gracefully\n    outputItems.push({\n      json: {\n        error: error.message,\n        fileName: item.json?.fileName || 'unknown',\n        status: 'failed'\n      }\n    });\n  }\n}\n\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        -208
+      ],
+      "id": "1c4ab24d-49ac-48af-ba94-7ea0517f2430",
+      "name": "Convert Image to Base64"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "piocr"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        80
+      ],
+      "id": "22041951-5607-4baf-a5c5-5825438d4c59",
+      "name": "Vector Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        80
+      ],
+      "id": "c8df969e-fc70-400e-a71f-82bb782f91a1",
+      "name": "gpt5 model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rcDKClOhVdIOQ2R1",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook listens for events from RaspberryPi": [
+      {
+        "json": [
+          {
+            "headers": {
+              "host": "felisha-nonpeaked-kaitlyn.ngrok-free.dev",
+              "user-agent": "python-requests/2.32.3",
+              "content-length": "721",
+              "accept": "*/*",
+              "accept-encoding": "gzip, deflate, br",
+              "content-type": "application/json",
+              "x-forwarded-for": "102.32.121.164",
+              "x-forwarded-host": "felisha-nonpeaked-kaitlyn.ngrok-free.dev",
+              "x-forwarded-proto": "https"
+            },
+            "params": {},
+            "query": {},
+            "body": {
+              "run_id": "df31b7c9-2421-4a51-8685-94c6a6ec3dbf",
+              "service_provider": "MTN",
+              "s3_bucket": "ocrstorage4d",
+              "s3_key": "simcard-crops/df31b7c9-2421-4a51-8685-94c6a6ec3dbf/crop_mtn_20251026_222840_741_frame0005_sim06.jpg",
+              "s3_url": "https://ocrstorage4d.s3.eu-north-1.amazonaws.com/simcard-crops/df31b7c9-2421-4a51-8685-94c6a6ec3dbf/crop_mtn_20251026_222840_741_frame0005_sim06.jpg",
+              "image_metadata": {
+                "filename": "crop_mtn_20251026_222840_741_frame0005_sim06.jpg",
+                "image_number": null,
+                "timestamp": "2025-10-26T22:28:40.841509",
+                "capture_type": "auto",
+                "resolution": "2560x1440",
+                "quality": 95,
+                "optimized_for_ocr": true,
+                "capture_performance": {
+                  "capture_time": 0.023150205612182617,
+                  "upload_time": 0.5570969581604004
+                }
+              }
+            },
+            "webhookUrl": "http://localhost:5678/webhook/72f60ef6-0d33-435c-9452-ec47caf7cb8b",
+            "executionMode": "production"
+          }
+        ]
+      }
+    ]
+  },
+  "connections": {
+    "Download Image from AWS S3 Bucket": {
+      "main": [
+        [
+          {
+            "node": "Analyze image for OCR gpt40",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert Image to Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook listens for events from RaspberryPi": {
+      "main": [
+        [
+          {
+            "node": "Download Image from AWS S3 Bucket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record in Airtable for visualisation": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image for OCR gpt40": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Convert Image to Base64": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vector Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt5 model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e907bcbf-5ae5-4798-b0e4-da971d8c69b0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55ba727e4853648a2101bd917e69c518277625a3676c41e84ae6d35af91527d2"
+  },
+  "id": "OsnzQTts8Lbj3bWN",
+  "tags": []
+}
